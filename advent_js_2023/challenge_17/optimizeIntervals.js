@@ -1,57 +1,38 @@
 function optimizeIntervals(intervals) {
-  intervals.sort((a, b) => a[0] - b[0]);
+  const newIntervals = [];
+  let auxInterval = [];
 
-  const mergedIntervals = [intervals[0]];
+  intervals.sort((intervalA, intervalB) => intervalA[0] - intervalB[0]);
 
   for (const interval of intervals) {
-    const currentInterval = interval;
-    const lastMergedInterval = mergedIntervals[mergedIntervals.length - 1];
-
-    if (currentInterval[0] <= lastMergedInterval[1]) {
-      lastMergedInterval[1] = Math.max(
-        lastMergedInterval[1],
-        currentInterval[1]
-      );
+    if (interval[0] <= auxInterval[1]) {
+      auxInterval[1] = Math.max(auxInterval[1], interval[1]);
+      newIntervals[newIntervals.length - 1] = auxInterval;
     } else {
-      mergedIntervals.push(currentInterval);
+      newIntervals.push(interval);
+      auxInterval = interval;
     }
   }
 
-  return mergedIntervals;
+  return newIntervals;
 }
 
-// function optimizeIntervals(intervals) {
-//   const newIntervals = [];
-//   let auxInterval = [];
+// ------- TEST ---------
 
-//   let stack = intervals.reduce((previousValue, currentValue) => {
-//     return [...previousValue, ...currentValue];
-//   }, []);
+optimizeIntervals([
+  [5, 8],
+  [2, 7],
+  [3, 4],
+]); // [[2, 8]]
 
-//   stack.sort();
-//   stack = stack.filter((value, index) => stack.indexOf(value) === index);
+optimizeIntervals([
+  [1, 3],
+  [8, 10],
+  [2, 6],
+]); // [[1, 6], [8, 10]]
 
-//   for (const [index, value] of stack.entries()) {
-//     const subs = stack[index + 1] - stack[index];
-//     if (subs !== 1) {
-//       if (auxInterval.length === 0) auxInterval.push(value);
-
-//       if (auxInterval.length === 1) {
-//         auxInterval.push(value);
-//         newIntervals.push(auxInterval);
-//         auxInterval = [];
-//       }
-//     }
-//   }
-
-//   console.log(stack);
-//   console.log(newIntervals);
-
-//   return newIntervals;
-// }
-
-// optimizeIntervals([
-//   [5, 8],
-//   [2, 7],
-//   [3, 4],
-// ]); // [[2, 8]]
+optimizeIntervals([
+  [3, 4],
+  [1, 2],
+  [5, 6],
+]); // [[1, 2], [3, 4], [5, 6]]
